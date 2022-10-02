@@ -57,6 +57,11 @@ public class QuerydslDemoTest {
 <br>
 
 # QueryDsl 설치법
+
+참고로 Q 클래스파일은 라이브러리 버전이 바뀔때마다 달라질 수 있으므로 매번 커밋해야한다.<br>
+기본적으로 build 폴더를 ignore하기 때문에 여기서는 build 폴더 안에 생성하고 있다.<br>
+혹시 build 폴더안에 생성되는 것이 싫다면 경로를 따로 설정하고 그 폴더를 ignore하는 것을 추천한다.
+
 1. `build.gradle` 에 다음과 같이 querydsl를 추가하기 위한 설정 코드를 넣는다.
 
 ```gradle
@@ -148,3 +153,14 @@ compileQuerydsl {
 
 5. 만약 build 폴더가 안보인다면 프로젝트를 보여주는 공간의 설정을 눌려서 제외된 파일 표시를 클릭하자.
 <img width="651" alt="image" src="https://user-images.githubusercontent.com/80039556/193440419-7c8f3b40-f4f0-4772-a21b-d9728a12b4de.png">
+
+<br>
+
+# build 폴더 삭제하기 (컴파일한 Q클래스 삭제)
+1. 해당 프로젝트 경로에 들어가서 gradlew 실행파일로 clean 명령어를 실행시켜 삭제하기
+<img width="500" alt="image" src="https://user-images.githubusercontent.com/80039556/193440903-f95602b1-c089-4a57-9b12-fb5ad84fb6ad.png">
+
+> 반대로 `./gradlew compileQuerydsl` 명령어를 입력해서 컴파일 가능
+
+2. 인텔리제이 우측의 Gradle -> Tasks -> build -> clean 실행시켜 삭제하기
+<img width="250" alt="image" src="https://user-images.githubusercontent.com/80039556/193440960-9028f2ab-721a-424d-97b3-81c74c625a82.png">
