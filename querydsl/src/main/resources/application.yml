@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/querydsl
+    username: sa
+    password: asdf
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+#        show_sql: true # System.out에 하이버네이트 실행 SQL을 남김
+        format_sql: true
+logging.level:
+  org.hibernate.SQL: debug # logger를 통해 하이버네이트 실행 SQL을 남김
+#  org.hibernate.type: trace # SQL에 (?)로 들어간 값을 표시해줌

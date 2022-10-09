@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.entity.Hello;
 import study.querydsl.entity.QHello;
@@ -15,7 +16,7 @@ import javax.persistence.PersistenceContext;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
+@Transactional // 기본적으로 롤백시킴
 class QuerydslApplicationTests {
 
     // 스프링 최신버전에서는 @Autowired를 사용하고, 자바 표준 스택에서는 @PersistenceContext 사용하면 된다. (상관없음)
