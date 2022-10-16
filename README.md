@@ -58,3 +58,4 @@ public class QuerydslDemoTest {
 
 # 목차
 - [QueryDsl 설치법](https://github.com/Sangyong-Jeon/Inflearn_Querydsl/wiki/QueryDsl-설치법)
+- [JPQL vs Querydsl](https://github.com/Sangyong-Jeon/Inflearn_Querydsl/wiki/JPQL-vs-QueryDsl-기본문법-차이)
