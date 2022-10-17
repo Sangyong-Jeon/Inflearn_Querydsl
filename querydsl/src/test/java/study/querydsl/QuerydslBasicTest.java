@@ -14,6 +14,7 @@ import study.querydsl.entity.Team;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.*;
+import static study.querydsl.entity.QMember.*;
 
 @SpringBootTest
 @Transactional
@@ -58,12 +59,12 @@ public class QuerydslBasicTest {
 
     @Test
     public void startQuerydsl() {
-        QMember m = new QMember("m"); // 매개변수에 별칭을 넣는건데 이거 안쓸거라 중요하지 않음. 추후 스태틱 객체를 쓸 것임.
+//        QMember m = new QMember("m"); // 매개변수에 별칭을 넣는건데 이거 안쓸거라 중요하지 않음. 추후 스태틱 객체를 쓸 것임.
 
         Member findMember = queryFactory
-                .selectt(m)
-                .from(m)
-                .where(m.username.eq("member1")) // 파라미터 바인딩을 자동처리함. 문자열 더하기였으면 sql인젝션 공격 받을 수 있는데 queryDsl은 자동으로 preparedstatement 파라미터 바인딩처럼 사용함. DB 성능상에서 더 좋음
+                .select(member)
+                .from(member)
+                .where(member.username.eq("member1")) // 파라미터 바인딩을 자동처리함. 문자열 더하기였으면 sql인젝션 공격 받을 수 있는데 queryDsl은 자동으로 preparedstatement 파라미터 바인딩처럼 사용함. DB 성능상에서 더 좋음
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
