@@ -2,6 +2,8 @@
 [인프런 강의](https://www.inflearn.com/course/Querydsl-실전)<br>
 강사 : [김영한](https://www.inflearn.com/users/@yh)
 
+> 강의를 통해 학습한 내용은 [wiki](https://github.com/Sangyong-Jeon/Inflearn_Querydsl/wiki)에 문서화하고 있습니다.
+
 <br>
 
 QueryDsl의 기초부터 실무 활용까지 학습할 수 있는 강의이다.
@@ -55,7 +57,3 @@ public class QuerydslDemoTest {
   - macOS 12.6
 
 <br>
-
-# 목차
-- [QueryDsl 설치법](https://github.com/Sangyong-Jeon/Inflearn_Querydsl/wiki/QueryDsl-설치법)
-- [JPQL vs Querydsl](https://github.com/Sangyong-Jeon/Inflearn_Querydsl/wiki/JPQL-vs-QueryDsl)
