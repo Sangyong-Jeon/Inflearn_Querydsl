@@ -1,6 +1,7 @@
 package study.querydsl;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.QMember;
+import study.querydsl.entity.QTeam;
 import study.querydsl.entity.Team;
 
 import javax.persistence.EntityManager;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static study.querydsl.entity.QMember.*;
+import static study.querydsl.entity.QTeam.*;
 
 @SpringBootTest
 @Transactional
@@ -172,5 +175,48 @@ public class QuerydslBasicTest {
         assertThat(queryResults.getLimit()).isEqualTo(2);
         assertThat(queryResults.getOffset()).isEqualTo(1);
         assertThat(queryResults.getResults().size()).isEqualTo(2);
+    }
+
+    @Test
+    public void aggregation() {
+        List<Tuple> result = queryFactory
+                .select(
+                        member.count(), // 회원수
+                        member.age.sum(), // 나이 합
+                        member.age.avg(), // 평균 나이
+                        member.age.max(), // 최대 나이
+                        member.age.min() // 최소 나이
+                )
+                .from(member)
+                .fetch();
+
+        Tuple tuple = result.get(0); // 데이터 타입이 여러개이기 때문에 Tuple로 받음 (실무에서는 dto를 많이 사용함)
+        assertThat(tuple.get(member.count())).isEqualTo(4);
+        assertThat(tuple.get(member.age.sum())).isEqualTo(100);
+        assertThat(tuple.get(member.age.avg())).isEqualTo(25);
+        assertThat(tuple.get(member.age.max())).isEqualTo(40);
+        assertThat(tuple.get(member.age.min())).isEqualTo(10);
+    }
+
+    /**
+     * 팀의 이름과 각 팀의 평균 연령을 구해라.
+     */
+    @Test
+    void group() throws Exception {
+        List<Tuple> result = queryFactory
+                .select(team.name, member.age.avg()) // 팀의 이름과 각 팀의 평균 나이
+                .from(member)
+                .join(member.team, team) // jpql 조인
+                .groupBy(team.name) // 팀 이름으로 그룹화
+                .fetch();
+
+        Tuple teamA = result.get(0);
+        Tuple teamB = result.get(1);
+
+        assertThat(teamA.get(team.name)).isEqualTo("teamA");
+        assertThat(teamA.get(member.age.avg())).isEqualTo(15); // (10+20) / 2
+
+        assertThat(teamB.get(team.name)).isEqualTo("teamB");
+        assertThat(teamB.get(member.age.avg())).isEqualTo(35); // (30+40) / 2
     }
 }
