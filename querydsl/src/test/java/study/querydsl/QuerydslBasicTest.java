@@ -384,7 +384,6 @@ public class QuerydslBasicTest {
 
     /**
      * 서브쿼리 여러 건 처리 in 사용
-     * 나이가 평균 이상인 회원
      */
     @Test
     public void subQueryIn() {
