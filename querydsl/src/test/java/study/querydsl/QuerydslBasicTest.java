@@ -4,12 +4,15 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jdk.nashorn.internal.runtime.regexp.joni.ast.CClassNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import static com.querydsl.jpa.JPAExpressions.*;
 import static org.assertj.core.api.Assertions.*;
@@ -646,5 +650,70 @@ public class QuerydslBasicTest {
                 .selectFrom(member)
                 .where(builder)
                 .fetch();
+    }
+
+    @Test
+    public void dynamicQuery_WhereParam() {
+        String usernameParam = "member1";
+        Integer ageParam = 10;
+
+        List<Member> result = searchMember2(usernameParam, ageParam);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    private List<Member> searchMember2(String usernameCond, Integer ageCond) {
+        return queryFactory
+                .selectFrom(member)
+                .where(usernameEq(usernameCond), ageEq(ageCond)) // where에 null이 들어가면 무시됨.
+//                .where(allEq(usernameCond, ageCond))
+                .fetch();
+    }
+
+    private BooleanExpression usernameEq(String usernameCond) {
+        return usernameCond != null ? member.username.eq(usernameCond) : null;
+    }
+
+    private BooleanExpression ageEq(Integer ageCond) {
+        return ageCond != null ? member.age.eq(ageCond) : null;
+    }
+
+    private BooleanExpression allEq(String usernameCond, Integer ageCond) {
+        return usernameEq(usernameCond).and(ageEq(ageCond));
+    }
+
+    @Test
+    public void dynamicQuery() {
+        String usernameParam = null;
+        Integer ageParam = null;
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .where(usernameAndAgeEq(usernameParam, ageParam))
+                .fetch();
+
+        for (Member member : result) {
+            System.out.println("member1 = " + member);
+        }
+    }
+
+    private BooleanBuilder usernameAndAgeEq(String usernameParam, Integer ageParam) {
+        return usernameEq2(usernameParam).and(ageEq2(ageParam));
+    }
+
+    private BooleanBuilder usernameEq2(String username) {
+        return nullSafeBuilder(() -> member.username.eq(username));
+    }
+
+    private BooleanBuilder ageEq2(Integer age) {
+        return nullSafeBuilder(() -> member.age.eq(age));
+    }
+
+    // 공통으로 사용할 수 있는 유틸리티 클래스로 뽑아서 사용하라는 의미로 static 메소드로 만듦
+    public static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
+        try {
+            return new BooleanBuilder(f.get());
+        } catch (IllegalArgumentException e) { // QueryDSL의 eq()에서 null이 들어가면 IllegalArgumentException 호출하므로 예외처리
+            return new BooleanBuilder();
+        }
     }
 }
