@@ -716,4 +716,58 @@ public class QuerydslBasicTest {
             return new BooleanBuilder();
         }
     }
+
+    // 벌크연산 - 대량 데이터 수정
+    // 변경감지는 엔티티 하나(한건)씩 수정하는거라 성능적으로 좋지 않음
+    @Test
+    public void bulkUpdate() {
+
+        // == 영속성 컨텍스트 상태 == //
+        //member1 = 10 -> member1
+        //member1 = 20 -> member2
+        //member1 = 30 -> member3
+        //member1 = 40 -> member4
+
+        // == 벌크 연산 실행 == //
+
+        // == DB 상태 == //
+        //member1 = 10 -> 비회원
+        //member1 = 20 -> 비회원
+        //member1 = 30 -> member3
+        //member1 = 40 -> member4
+
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(28))
+                .execute();
+
+        // 영속성 컨텍스트 초기화해서 DB와 값 불일치성을 맞춤
+        em.flush();
+        em.clear();
+
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .fetch();
+
+        for (Member member1 : result) {
+            System.out.println("member1 = " + member1);
+        }
+    }
+
+    @Test
+    public void bulkAdd() {
+        queryFactory
+                .update(member)
+                .set(member.age, member.age.add(1))
+                .execute();
+    }
+
+    @Test
+    public void bulkDelete() {
+        long count = queryFactory
+                .delete(member)
+                .where(member.age.gt(18))
+                .execute();
+    }
 }
