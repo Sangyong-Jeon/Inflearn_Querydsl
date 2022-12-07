@@ -31,22 +31,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     @Override
     public List<MemberTeamDto> search(MemberSearchCondition condition) {
-
-        List<MemberTeamDto> result = from(member)
-                .leftJoin(member.team, team)
-                .where(
-                        usernameEq(condition.getUsername()),
-                        teamNameEq(condition.getTeamName()),
-                        ageGoe(condition.getAgeGoe()),
-                        ageLoe(condition.getAgeLoe()))
-                .select(new QMemberTeamDto(
-                        member.id,
-                        member.username,
-                        member.age,
-                        team.id,
-                        team.name))
-                .fetch();
-
         return queryFactory
                 .select(new QMemberTeamDto(
                         member.id,
